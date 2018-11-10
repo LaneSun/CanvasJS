@@ -118,6 +118,17 @@ window.Drawer = {};
                 })
             },
         },
+        {
+            name: "Fill Screen",
+            handle: () => {
+                if (document.webkitFullscreenElement) {
+                    document.webkitExitFullscreen();
+                } else {
+                    document.body.webkitRequestFullscreen();
+                    document.body.style.backgroundColor = "#cfcfcf";
+                }
+            },
+        },
     ];
     self.save_file = (name) => {
         localStorage.setItem("canvas-save-" + name,JSON.stringify({width:self.width, height: self.height, style_cache: self.style_cache, canvas_cache:self.canvas_cache}));
@@ -205,10 +216,24 @@ window.Drawer = {};
         }
         str += `<div class="his-unit`+ (atEnd() ? ` pointer` : ``) +`" id="` + self.canvas_cache.length + `"></div>`;
         self.history_elem.innerHTML = str;
-        self.refresh_shapes_menu();
+        // self.refresh_shapes_menu();
     };
     self.refresh_shapes_menu = () => {
-
+        let shapes = getShapes();
+        Right.clearUnits("shapes","Shapes");
+        for (let shape of shapes) {
+            Right.addHTML("shapes",`
+            <div class="menu-unit-left">` + shape.startP + " ~ " + shape.endP + `</div>
+            <div class="menu-unit-right" id="` + shape.startP + ":" + shape.endP + `">
+                <div class="button" id=""
+            </div>
+        `,() => {
+                let index = self.tool_cache.indexOf(self.type_selected) + 1;
+                self.type_selected = self.tool_cache[index > (self.tool_cache.length - 1) ? 0 : index];
+                self.refresh_Right();
+                self.refresh_tool_bar();
+            });
+        }
     };
     self.refresh_saves = () => {
         let str = `<div class="his-head" id="__save">Save</div>`;
@@ -352,6 +377,10 @@ window.Drawer = {};
         self.tool_bar.addEventListener("mousedown",() => {window.setTimeout(Right.appear,0,108/*window.innerWidth / 2 + 50*/, 0)});
         self.tool_bar.addEventListener("mouseover",ShowPreview);
         self.tool_bar.addEventListener("mouseout",HidePreview);
+        Right.elem.shapes.addEventListener("mouseover",MoveLeft);
+        Right.elem.shapes.addEventListener("mouseout",MoveBack);
+        Right.elem.groups.addEventListener("mouseover",MoveLeft);
+        Right.elem.groups.addEventListener("mouseout",MoveBack);
     };
     self.change_style = (style,data) => {
         self.style_cache[style] = data;
@@ -526,11 +555,22 @@ window.Drawer = {};
         self.context.clearRect(0,0,self.width,self.height);
         self.scontext.clearRect(0,0,self.width,self.height);
     };
+    let getShapes = () => {
+        // TODO Fun getShapes()
+    };
     let ShowPreview = () => {
         self.draw_canvas.style.left = "28%";
         self.show_canvas.style.left = "72%";
     };
     let HidePreview = () => {
+        self.draw_canvas.style.left = "50%";
+        self.show_canvas.style.left = "50%";
+    };
+    let MoveLeft = () => {
+        self.draw_canvas.style.left = "28%";
+        self.show_canvas.style.left = "28%";
+    };
+    let MoveBack = () => {
         self.draw_canvas.style.left = "50%";
         self.show_canvas.style.left = "50%";
     };

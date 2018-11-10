@@ -72,7 +72,7 @@ body{
     width: 200px;
     max-height: 0;
     transition: all 0.5s;
-    left: 10;
+    left: 10px;
     bottom: 0;
     /*box-shadow: 0 0 8px black;*/
     overflow: hidden;
@@ -91,10 +91,10 @@ body{
     /*border-top-right-radius: 8px;*/
     /*border-top-left-radius: 8px;*/
     position: fixed;
-    width: 200px;
+    width: 300px;
     max-height: 0;
     transition: all 0.5s;
-    left: 230px;
+    right: 330px;
     bottom: 0;
     /*box-shadow: 0 0 8px black;*/
     overflow: hidden;
@@ -135,10 +135,10 @@ body{
     /*border-top-right-radius: 8px;*/
     /*border-top-left-radius: 8px;*/
     position: fixed;
-    width: 200px;
+    width: 300px;
     max-height: 0;
     transition: all 0.5s;
-    left: 450px;
+    right: 10px;
     bottom: 0;
     /*box-shadow: 0 0 8px black;*/
     overflow: hidden;
@@ -239,4 +239,10 @@ body{
 .selected:hover{
     background-color: #434343;
     color: #c6c6c6;
+}
+.shapes > .his-head{
+    width: 300px;
+}
+.groups > .his-head{
+    width: 300px;
 }
