@@ -37,6 +37,7 @@ window.Drawer = {};
     self.drawer_cache = [
         "line",
         "arc",
+        "point_arc"
     ];
     self.style_cache = {
         stroke_width: 2,
@@ -340,6 +341,9 @@ window.Drawer = {};
         }
         if (self.arc_cache.center && self.active) {
             markDot(self.arc_cache.center.x,self.arc_cache.center.y,self.context);
+        }
+        if (self.arc_cache.point2 && self.active) {
+            markDot(self.arc_cache.point2.x,self.arc_cache.point2.y,self.context);
         }
         if (!hasEndAhead() && self.active) {
             if (self.pointer > 1 && self.canvas_cache[self.pointer - 2]) {
@@ -655,6 +659,9 @@ window.Drawer = {};
             case "arc":
                 arcController(e,true);
                 break;
+            case "point_arc":
+                pointArcController(e,true);
+                break;
             default:
                 break;
         }
@@ -672,6 +679,9 @@ window.Drawer = {};
                 break;
             case "arc":
                 arcController(e,false);
+                break;
+            case "point_arc":
+                pointArcController(e,false);
                 break;
             default:
                 break;
@@ -763,6 +773,61 @@ window.Drawer = {};
             }
         }
     };
+    let pointArcController = (e,isTemp) => {
+        let pos = getHelpedXYByE(e);
+        let x = pos.x;
+        let y = pos.y;
+        removeTempCache();
+        if (isTemp) {
+            if (!self.arc_cache.point1 && hasPathAhead() || hasBeginAhead()) {
+                if (getPointAhead().drawer === "arc") {
+                    self.arc_cache.point1 = {x: getPointAhead().x + getPointAhead().r * Math.cos(getPointAhead().a2), y: getPointAhead().y + getPointAhead().r * Math.sin(getPointAhead().a2)};
+                } else {
+                    self.arc_cache.point1 = {x: getPointAhead().x, y: getPointAhead().y};
+                }
+            }
+            if (self.arc_cache.point2) {
+                if (atStart() || hasEndAhead()) {
+                    addBegin(self.arc_cache.point1.x,self.arc_cache.point1.y,true);
+                }
+                addArcByPoints2(self.arc_cache.point1,self.arc_cache.point2,{x: x, y: y},e.shiftKey,true);
+            }
+        } else {
+            switch (e.button) {
+                case 0:
+                    if (self.arc_cache.point1) {
+                        if (self.arc_cache.point2) {
+                            if (atStart() || hasEndAhead()) {
+                                addBegin(self.arc_cache.point1.x,self.arc_cache.point1.y,false);
+                            }
+                            addArcByPoints2(self.arc_cache.point1,self.arc_cache.point2,{x: x, y: y},e.shiftKey,false);
+                            resetArcCache();
+                        } else {
+                            self.arc_cache.point2 = {x: x, y: y};
+                        }
+                    } else {
+                        if (hasPathAhead() || hasBeginAhead()) {
+                            if (getPointAhead().drawer === "arc") {
+                                self.arc_cache.point1 = {x: getPointAhead().x + getPointAhead().r * Math.cos(getPointAhead().a2), y: getPointAhead().y + getPointAhead().r * Math.sin(getPointAhead().a2)};
+                            } else {
+                                self.arc_cache.point1 = {x: getPointAhead().x, y: getPointAhead().y};
+                            }
+                            self.arc_cache.point2 = {x: x, y: y};
+                        } else {
+                            self.arc_cache.point1 = {x: x, y: y};
+                        }
+                    }
+                    break;
+                case 2:
+                    if (!atStart() && !hasEndAhead() && !hasEndBack()) {
+                        addEnd(false);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     let atStart = (n = 0) => {
         return self.pointer + n === 0;
     };
@@ -817,6 +882,14 @@ window.Drawer = {};
         self.addShape(obj);
     };
     let addArcByPoints = (p1,center,p2,isClock,isTemp) => {
+        addArc(center.x,center.y,getDistance(p1,center),Math.atan2(p1.y - center.y, p1.x - center.x),Math.atan2(p2.y - center.y, p2.x - center.x),isClock,isTemp);
+    };
+    let addArcByPoints2 = (p1,p2,center,isClock,isTemp) => {
+        if (Math.abs(p1.y - p2.y) > Math.abs(p1.x - p2.x)) {
+            center.y = (p1.y + p2.y) / 2 - (p1.x - p2.x) * (2 * center.x - p1.x - p2.x) / (p1.y - p2.y) / 2;
+        } else {
+            center.x = (p1.x + p2.x) / 2 - (p1.y - p2.y) * (2 * center.y - p1.y - p2.y) / (p1.x - p2.x) / 2;
+        }
         addArc(center.x,center.y,getDistance(p1,center),Math.atan2(p1.y - center.y, p1.x - center.x),Math.atan2(p2.y - center.y, p2.x - center.x),isClock,isTemp);
     };
     let getDistance = (p1,p2) => {
