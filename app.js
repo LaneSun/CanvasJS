@@ -628,6 +628,7 @@ window.Drawer = {};
             case "Backspace":
                 if (!atStart()) {
                     self.removeShape(self.pointer - 1);
+                    resetArcCache();
                 }
                 break;
             case "s":
@@ -906,14 +907,13 @@ window.Drawer = {};
             y: y,
             r: r,
             a1: a1,
-            a2: a2 === a1 ? a2 + 2 * Math.PI : a2,
+            a2: (0|(a2 * 100) + 0.5) === (0|(a1 * 100) + 0.5)  ? a2 + 2 * Math.PI : a2,
             clock: !isClock,
         };
         if (isTemp) {
             obj.temp = true;
         }
         self.addShape(obj);
-        resetArcCache();
     };
     let addCache = (x,y,isTemp) => {
         if (!isTemp) {
