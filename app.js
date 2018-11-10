@@ -8,6 +8,7 @@ window.Drawer = {};
     self.show_canvas = undefined;
     self.tool_bar = undefined;
     self.history_elem = undefined;
+    self.saves_elem = undefined;
     self.canvasjs = undefined;
     self.width = 512;
     self.height = 512;
@@ -50,6 +51,8 @@ window.Drawer = {};
         fill_color: "#000000",
         shadow_color: "#000000",
     };
+    self.save_cache = undefined;
+    self.save_name = "Default";
     self.mark_index = undefined;
     self.active = true;
     self.mark_style = {
@@ -60,6 +63,124 @@ window.Drawer = {};
         line_cap: "round",
         line_join: "round",
         alpha: 1,
+    };
+    self.commands = [
+        {
+            name: "Clear Canvas",
+            handle: () => {self.canvas_cache = [];self.pointer = 0;self.refresh_history();self.refresh_canvas()},
+        },
+        {
+            name: "Save",
+            handle: () => {self.save_file(self.save_name)},
+        },
+        {
+            name: "Rename",
+            handle: () => {self.rename_file(self.save_name,window.prompt("New Name"))},
+        },
+        {
+            name: "Create Copy",
+            handle: () => {self.create_copy(self.save_name)},
+        },
+        {
+            name: "Create File",
+            handle: () => {
+                let name = window.prompt("File Name");
+                if (name && self.save_cache.findIndex((elem) => {return elem === name})) {
+                    self.create_file(name);
+                }
+            },
+        },
+        {
+            name: "Delete",
+            handle: () => {self.delete_file(self.save_name)},
+        },
+        {
+            name: "Export Code",
+            handle: () => {
+                    removeAllTemp();
+                    swal(JSON.stringify(self.canvas_cache));
+                },
+        },
+        {
+            name: "Import Code",
+            handle: () => {
+                swal({
+                    input: 'textarea',
+                    showCancelButton: true
+                }).then(function (result) {
+                    if (result) {
+                        removeTempCache();
+                        self.canvas_cache.splice(self.pointer, 0, ...JSON.parse(result));
+                        self.pointer = self.canvas_cache.length;
+                        self.refresh_canvas();
+                        self.refresh_history();
+                    }
+                })
+            },
+        },
+    ];
+    self.save_file = (name) => {
+        localStorage.setItem("canvas-save-" + name,JSON.stringify({width:self.width, height: self.height, style_cache: self.style_cache, canvas_cache:self.canvas_cache}));
+    };
+    self.rename_file = (name,newname) => {
+        if (newname) {
+            self.save_name = newname;
+            self.save_cache.push(newname);
+            self.set_saves_cache();
+            self.delete_file(name);
+            self.save_file(newname);
+            self.refresh_title();
+            self.refresh_saves();
+        }
+    };
+    self.create_copy = (name) => {
+        let newname = name + "-copy";
+        self.save_file(name);
+        self.save_name = newname ;
+        self.save_file(newname);
+        self.save_cache.push(newname);
+        self.set_saves_cache();
+        self.refresh_title();
+        self.refresh_saves();
+    };
+    self.delete_file = (name) => {
+        if (name === "Default") {return}
+        self.save_cache.splice(self.save_cache.findIndex((elem) => {return elem === name}),1);
+        localStorage.removeItem("canvas-save-" + name);
+        if (name === self.save_name) {
+            self.open_file("Default");
+        }
+        self.refresh_saves();
+    };
+    self.open_file = (name) => {
+        let file = localStorage.getItem("canvas-save-" + name);
+        if (file) {
+            file = JSON.parse(file);
+            self.canvas_cache = file.canvas_cache;
+            self.draw_canvas.width = self.show_canvas.width = self.width = file.width;
+            self.draw_canvas.height = self.show_canvas.height = self.height = file.height;
+            self.style_cache = file.style_cache;
+        } else {
+            self.canvas_cache = [];
+        }
+        self.save_name = name;
+        self.save_file(self.save_name);
+        self.pointer = self.canvas_cache.length;
+        self.set_scale(1.0);
+        self.refresh_tool_bar();
+        self.refresh_Right();
+        self.refresh_saves();
+        self.refresh_canvas();
+        self.refresh_history();
+        self.refresh_title();
+    };
+    self.create_file = (name) => {
+        self.save_cache.push(name);
+        self.set_saves_cache();
+        self.open_file(name);
+    };
+    self.refresh_title = () => {
+        document.title = "CanvasJS: " + self.save_name;
     };
     self.addShape = (shape) => {
         self.canvas_cache.splice(self.pointer, 0, shape);
@@ -85,11 +206,27 @@ window.Drawer = {};
         str += `<div class="his-unit`+ (atEnd() ? ` pointer` : ``) +`" id="` + self.canvas_cache.length + `"></div>`;
         self.history_elem.innerHTML = str;
     };
-    self.init = (draw,show,bar1,his,engine) => {
+    self.refresh_saves = () => {
+        let str = `<div class="his-head">Saves</div>`;
+        for (let save of self.save_cache) {
+            str += `<div class="his-unit`+ (save === self.save_name ? ` selected` : ``) +`" id="save:` + save + `">` + save + `</div>`;
+        }
+        self.saves_elem.innerHTML = str;
+    };
+    self.get_saves_cache = () => {
+        let cache = localStorage.getItem("canvas-saves-cache");
+        cache = cache ? JSON.parse(cache) : ["Default"];
+        self.save_cache = cache;
+    };
+    self.set_saves_cache = () => {
+        localStorage.setItem("canvas-saves-cache",JSON.stringify(self.save_cache));
+    };
+    self.init = (draw,show,bar1,his,sav,engine) => {
         self.draw_canvas = draw;
         self.show_canvas = show;
         self.tool_bar = bar1;
         self.history_elem = his;
+        self.saves_elem = sav;
         self.context = draw.getContext("2d");
         self.scontext = show.getContext("2d");
         self.tcontext = bar1.getContext("2d");
@@ -102,6 +239,10 @@ window.Drawer = {};
         self.bind_all();
         self.refresh_Right();
         self.refresh_history();
+        self.get_saves_cache();
+        self.set_saves_cache();
+        self.refresh_saves();
+        self.open_file("Default");
     };
     self.set_canvas_size = (width,height) => {
         self.draw_canvas.width = self.width = width;
@@ -199,6 +340,7 @@ window.Drawer = {};
         self.history_elem.addEventListener("mouseout",clear_mark);
         self.history_elem.addEventListener("mousemove",refresh_mark);
         self.history_elem.addEventListener("mousedown",pointer_set);
+        self.saves_elem.addEventListener("mousedown",file_set);
         self.draw_canvas.addEventListener("mousemove",DrawerMoveHandle);
         self.draw_canvas.addEventListener("mousedown",DrawerHandle);
         self.draw_canvas.addEventListener("mouseout",DrawerOutHandle);
@@ -369,28 +511,9 @@ window.Drawer = {};
                 self.change_style("shadow_color",document.getElementById("color").value);
             });
         });
-        Right.addHTML(`
-            <div class="menu-unit-left">Export Code</div>
-        `,() => {
-            removeAllTemp();
-            swal(JSON.stringify(self.canvas_cache));
-        });
-        Right.addHTML(`
-            <div class="menu-unit-left">Import Code</div>
-        `,() => {
-            swal({
-                input: 'textarea',
-                showCancelButton: true
-            }).then(function(result) {
-                if (result) {
-                    removeTempCache();
-                    self.canvas_cache.splice(self.pointer,0,...JSON.parse(result));
-                    self.pointer = self.canvas_cache.length;
-                    self.refresh_canvas();
-                    self.refresh_history();
-                }
-            })
-        });
+        for (let comm of self.commands) {
+            Right.addHTML(`<div class="menu-unit-left">` + comm.name + `</div>`,comm.handle);
+        }
     };
     self.clear_ctx = () => {
         self.context.clearRect(0,0,self.width,self.height);
@@ -413,6 +536,11 @@ window.Drawer = {};
             self.refresh_history();
         }
     };
+    let file_set = (e) => {
+        if (e.target.id) {
+            self.open_file(e.target.id.split(":")[1]);
+        }
+    };
     let getHelpedXYByE = (e) => {
         return {
             x: getHelp(e.offsetX / self.scale,self.sizeX),
@@ -433,8 +561,17 @@ window.Drawer = {};
         ctx.fillRect(x - size/2, y - size/2, size, size);
     };
     let KeyHandle = (e) => {
-        if (e.key === "Backspace" && !atStart() && !atEnd(1)) {
-            self.removeShape(self.pointer - 1);
+        switch (e.key) {
+            case "Backspace":
+                if (!atStart() && !atEnd(1)) {
+                    self.removeShape(self.pointer - 1);
+                }
+                break;
+            case "s":
+                self.save_file(self.save_name);
+                break;
+            default:
+                break;
         }
     };
     let WheelHandle = (e) => {
