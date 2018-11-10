@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Drawer</title>
+    <script src="app.js"></script>
+    <script src="tools.js"></script>
+    <script src="right.js"></script>
+    <script src="src/canvas.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="right.css">
+    <script src="sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+</head>
+<body>
+<canvas id="tool" height="100" width="100"></canvas>
+<canvas id="draw" width="512" height="512"></canvas>
+<canvas id="show" width="512" height="512"></canvas>
+<div id="history" class="history">
+    <div class="his-head">Points</div>
+</div>
+<div id="shapes" class="shapes">
+    <div class="his-head">Shapes</div>
+</div>
+<div id="saves" class="saves">
+    <div class="his-head">Saves</div>
+</div>
+<div id="groups" class="groups">
+    <div class="his-head">Groups</div>
+</div>
+<script>
+    Right.init(document.body);
+    Drawer.init(document.getElementById("draw"),document.getElementById("show"),document.getElementById("tool"),document.getElementById("history"),undefined);
+</script>
+</body>
+</html>

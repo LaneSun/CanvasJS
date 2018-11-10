@@ -1,0 +1,173 @@
+body{
+    background-color: #cfcfcf;
+    user-select: none;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+#tool{
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: #efefef;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    box-shadow: 0 0 8px black;
+    /*transition: all 0.15s;*/
+    transform: translateX(-50%);
+    z-index: 4;
+}
+#tool:hover{
+    background-color: #dfdfdf;
+}
+@keyframes back
+{
+    0%   {background-color: #ffffff
+    }
+    100% {background-color: #c3c3c3
+    }
+}
+#draw{
+    background-color: #ffffff;
+    position: fixed;
+    top: 50%;
+    left: 70%;
+    /*transition: all 0.2s;*/
+    transform: translate(-50%,-50%);
+    /*border: 4px solid rgb(195, 195, 195);*/
+    animation: back 1s ease 1s infinite alternate;
+    z-index: 3;
+    image-rendering: pixelated;
+}
+#show{
+    background-color: #efefef;
+    position: fixed;
+    top: 50%;
+    left: 30%;
+    transition: all 0.2s;
+    transform: translate(-50%,-50%);
+    /*border: 4px solid rgb(195, 195, 195);*/
+    /*animation: back 1s ease 1s infinite alternate;*/
+    z-index: 2;
+}
+.menu-unit-left{
+    display: inline;
+    left: 0;
+    padding: 0 32px 0 0;
+    text-align: left;
+}
+.menu-unit-right{
+    display: inline;
+    left: 0;
+    float: right;
+}
+.history{
+    background-color: white;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    position: fixed;
+    max-width: 20%;
+    min-width: 20%;
+    max-height: 0;
+    transition: all 0.5s;
+    left: 2.5%;
+    bottom: 0;
+    box-shadow: 0 0 8px black;
+    overflow: hidden;
+    z-index: 7;
+    padding-top: 42px;
+}
+.history:hover{
+    max-height: 90%;
+    overflow-y: auto;
+}
+.shapes{
+    background-color: white;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    position: fixed;
+    max-width: 20%;
+    min-width: 20%;
+    max-height: 0;
+    transition: all 0.5s;
+    left: 27.5%;
+    bottom: 0;
+    box-shadow: 0 0 8px black;
+    overflow: hidden;
+    z-index: 7;
+    padding-top: 42px;
+}
+.shapes:hover{
+    max-height: 90%;
+    overflow-y: auto;
+}
+.saves{
+    background-color: white;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    position: fixed;
+    max-width: 20%;
+    min-width: 20%;
+    max-height: 0;
+    transition: all 0.5s;
+    left: 52.5%;
+    bottom: 0;
+    box-shadow: 0 0 8px black;
+    overflow: hidden;
+    z-index: 7;
+    padding-top: 42px;
+}
+.saves:hover{
+    max-height: 90%;
+    overflow-y: auto;
+}
+.groups{
+    background-color: white;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    position: fixed;
+    max-width: 20%;
+    min-width: 20%;
+    max-height: 0;
+    transition: all 0.5s;
+    left: 77.5%;
+    bottom: 0;
+    box-shadow: 0 0 8px black;
+    overflow: hidden;
+    z-index: 7;
+    padding-top: 42px;
+}
+.groups:hover{
+    max-height: 90%;
+    overflow-y: auto;
+}
+.his-head{
+    position: fixed;
+    height: 42px;
+    width: 20%;
+    font-size: 28px;
+    color: #878787;
+    margin: -42px 0 0;
+    background-color: #efefef;
+    text-align: center;
+}
+.his-unit{
+    font-size: 14px;
+    color: #696969;
+    /*text-align: left;*/
+    padding: 8px;
+    height: 20px;
+    background-color: white;
+}
+.his-unit:hover{
+    background-color: #efefef;
+}
+@keyframes pointer
+{
+    0%   {border-top: #eeeeee solid 2px
+    }
+    100% {border-top: #9b9b9b solid 2px
+    }
+}
+.pointer{
+    border-top: #9b9b9b solid 2px;
+    animation: pointer 0.5s ease 0s infinite alternate;
+}
