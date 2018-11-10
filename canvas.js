@@ -37,18 +37,18 @@ window.CanvasJS = {};
 
         // ctx.arc(sets.x + data[i].x * sets.scale, sets.y + data[i].y * sets.scale, data[i].r * sets.scale, data[i].a1, data[i].a2, data[i].clock);
     };
-    Fns.end = (ctx, data) => {
+    Fns.end = (ctx, data, sets) => {
         ctx.globalAlpha = data.style.alpha;
         ctx.fillStyle = data.style.fill_color;
         ctx.lineCap = data.style.line_cap;
         ctx.lineJoin = data.style.line_join;
-        ctx.lineWidth = data.style.line_width;
-        ctx.strokeWidth = data.style.stroke_width;
+        ctx.lineWidth = data.style.line_width * sets.scale;
+        // ctx.strokeWidth = data.style.stroke_width * sets.scale;
         ctx.strokeStyle = data.style.stroke_color;
         ctx.shadowColor = data.style.shadow_color;
-        ctx.shadowBlur = data.style.shadow_blur;
-        ctx.shadowOffsetX = data.style.shadow_offsetX;
-        ctx.shadowOffsetY = data.style.shadow_offsetY;
+        ctx.shadowBlur = data.style.shadow_blur * sets.scale;
+        ctx.shadowOffsetX = data.style.shadow_offsetX * sets.scale;
+        ctx.shadowOffsetY = data.style.shadow_offsetY * sets.scale;
         switch (data.mode) {
             case "fill":
                 ctx.fill();
