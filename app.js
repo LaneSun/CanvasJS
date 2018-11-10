@@ -68,7 +68,7 @@ window.Drawer = {};
     self.commands = [
         {
             name: "Clear Canvas",
-            handle: () => {self.canvas_cache = [];self.pointer = 0;self.refresh_history();self.refresh_canvas()},
+            handle: () => {self.canvas_cache = [];self.pointer = 0;resetArcCache();self.refresh_history();self.refresh_canvas()},
         },
         {
             name: "Save",
