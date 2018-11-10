@@ -626,7 +626,7 @@ window.Drawer = {};
     let KeyHandle = (e) => {
         switch (e.key) {
             case "Backspace":
-                if (!atStart() && !atEnd(1)) {
+                if (!atStart()) {
                     self.removeShape(self.pointer - 1);
                 }
                 break;
