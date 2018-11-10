@@ -913,6 +913,7 @@ window.Drawer = {};
             obj.temp = true;
         }
         self.addShape(obj);
+        resetArcCache();
     };
     let addCache = (x,y,isTemp) => {
         if (!isTemp) {
