@@ -626,9 +626,9 @@ window.Drawer = {};
     let KeyHandle = (e) => {
         switch (e.key) {
             case "Backspace":
+                resetArcCache();
                 if (!atStart()) {
                     self.removeShape(self.pointer - 1);
-                    resetArcCache();
                 }
                 break;
             case "s":
