@@ -205,9 +205,13 @@ window.Drawer = {};
         }
         str += `<div class="his-unit`+ (atEnd() ? ` pointer` : ``) +`" id="` + self.canvas_cache.length + `"></div>`;
         self.history_elem.innerHTML = str;
+        self.refresh_shapes_menu();
+    };
+    self.refresh_shapes_menu = () => {
+
     };
     self.refresh_saves = () => {
-        let str = `<div class="his-head">Saves</div>`;
+        let str = `<div class="his-head" id="__save">Save</div>`;
         for (let save of self.save_cache) {
             str += `<div class="his-unit`+ (save === self.save_name ? ` selected` : ``) +`" id="save:` + save + `">` + save + `</div>`;
         }
@@ -345,7 +349,9 @@ window.Drawer = {};
         self.draw_canvas.addEventListener("mousedown",DrawerHandle);
         self.draw_canvas.addEventListener("mouseout",DrawerOutHandle);
         self.draw_canvas.addEventListener("wheel",WheelHandle);
-        self.tool_bar.addEventListener("mousedown",() => {window.setTimeout(Right.appear,0,window.innerWidth / 2 + 50, 0)});
+        self.tool_bar.addEventListener("mousedown",() => {window.setTimeout(Right.appear,0,108/*window.innerWidth / 2 + 50*/, 0)});
+        self.tool_bar.addEventListener("mouseover",ShowPreview);
+        self.tool_bar.addEventListener("mouseout",HidePreview);
     };
     self.change_style = (style,data) => {
         self.style_cache[style] = data;
@@ -354,8 +360,9 @@ window.Drawer = {};
     };
     self.refresh_Right = () => {
         // language=HTML
-        Right.clearUnits();
-        Right.addHTML(`
+        Right.clearUnits("styles","Styles");
+        Right.clearUnits("units","Units");
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Type</div>
             <div class="menu-unit-right">` + self.type_selected + `</div>
         `,() => {
@@ -364,7 +371,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_tool_bar();
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Drawer</div>
             <div class="menu-unit-right">` + self.drawer_selected + `</div>
         `,() => {
@@ -374,7 +381,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_tool_bar();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Canvas Size X</div>
             <div class="menu-unit-right">` + self.width + `</div>
         `,() => {
@@ -383,7 +390,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Canvas Size Y</div>
             <div class="menu-unit-right">` + self.height + `</div>
         `,() => {
@@ -392,7 +399,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Ruler Size X</div>
             <div class="menu-unit-right">` + self.sizeX + `</div>
         `,() => {
@@ -400,7 +407,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Ruler Size Y</div>
             <div class="menu-unit-right">` + self.sizeY + `</div>
         `,() => {
@@ -408,7 +415,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Ruler Point Size</div>
             <div class="menu-unit-right">` + self.SIZE_RULER + `</div>
         `,() => {
@@ -416,7 +423,7 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
+        Right.addHTML("units",`
             <div class="menu-unit-left">Mouse Point Size</div>
             <div class="menu-unit-right">` + self.SIZE_HELPER + `</div>
         `,() => {
@@ -424,55 +431,55 @@ window.Drawer = {};
             self.refresh_Right();
             self.refresh_canvas();
         });
-        Right.addHTML(`
-            <div class="menu-unit-left">Stroke Width</div>
-            <div class="menu-unit-right">` + self.style_cache.stroke_width + `</div>
-        `,() => {
-            self.change_style("stroke_width",Number.parseFloat(window.prompt("Stroke Width")));
-        });
-        Right.addHTML(`
+        // Right.addHTML("styles",`
+        //     <div class="menu-unit-left">Stroke Width</div>
+        //     <div class="menu-unit-right">` + self.style_cache.stroke_width + `</div>
+        // `,() => {
+        //     self.change_style("stroke_width",Number.parseFloat(window.prompt("Stroke Width")));
+        // });
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Line Width</div>
             <div class="menu-unit-right">` + self.style_cache.line_width + `</div>
         `,() => {
             self.change_style("line_width",Number.parseFloat(window.prompt("Line Width")));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Shadow Blur</div>
             <div class="menu-unit-right">` + self.style_cache.shadow_blur + `</div>
         `,() => {
             self.change_style("shadow_blur",Number.parseFloat(window.prompt("Shadow Blur")));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Shadow Offset X</div>
             <div class="menu-unit-right">` + self.style_cache.shadow_offsetX + `</div>
         `,() => {
             self.change_style("shadow_offsetX",Number.parseFloat(window.prompt("Shadow Offset X")));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Shadow Offset Y</div>
             <div class="menu-unit-right">` + self.style_cache.shadow_offsetY + `</div>
         `,() => {
             self.change_style("shadow_offsetY",Number.parseFloat(window.prompt("Shadow Offset Y")));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Alpha</div>
             <div class="menu-unit-right">` + self.style_cache.alpha + `</div>
         `,() => {
             self.change_style("alpha",Number.parseFloat(window.prompt("Alpha")));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Line Cap</div>
             <div class="menu-unit-right">` + self.style_cache.line_cap + `</div>
         `,() => {
             self.change_style("line_cap",window.prompt("Line Cap"));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Line Join</div>
             <div class="menu-unit-right">` + self.style_cache.line_join + `</div>
         `,() => {
             self.change_style("line_join",window.prompt("Line Join"));
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Stroke Color</div>
             <div class="menu-unit-right">` + self.style_cache.stroke_color + `</div>
         `,() => {
@@ -485,7 +492,7 @@ window.Drawer = {};
                 self.change_style("stroke_color",document.getElementById("color").value);
             });
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Fill Color</div>
             <div class="menu-unit-right">` + self.style_cache.fill_color + `</div>
         `,() => {
@@ -498,7 +505,7 @@ window.Drawer = {};
                 self.change_style("fill_color",document.getElementById("color").value);
             });
         });
-        Right.addHTML(`
+        Right.addHTML("styles",`
             <div class="menu-unit-left">Shadow Color</div>
             <div class="menu-unit-right">` + self.style_cache.shadow_color + `</div>
         `,() => {
@@ -512,12 +519,20 @@ window.Drawer = {};
             });
         });
         for (let comm of self.commands) {
-            Right.addHTML(`<div class="menu-unit-left">` + comm.name + `</div>`,comm.handle);
+            Right.addHTML("units",`<div class="menu-unit-left">` + comm.name + `</div>`,comm.handle);
         }
     };
     self.clear_ctx = () => {
         self.context.clearRect(0,0,self.width,self.height);
         self.scontext.clearRect(0,0,self.width,self.height);
+    };
+    let ShowPreview = () => {
+        self.draw_canvas.style.left = "28%";
+        self.show_canvas.style.left = "72%";
+    };
+    let HidePreview = () => {
+        self.draw_canvas.style.left = "50%";
+        self.show_canvas.style.left = "50%";
     };
     let getHelp = (i,h) => {
         return (0|(i / h) + 0.5) * h;
@@ -538,7 +553,11 @@ window.Drawer = {};
     };
     let file_set = (e) => {
         if (e.target.id) {
-            self.open_file(e.target.id.split(":")[1]);
+            if (e.target.id === "__save") {
+                self.save_file(self.save_name);
+            } else {
+                self.open_file(e.target.id.split(":")[1]);
+            }
         }
     };
     let getHelpedXYByE = (e) => {

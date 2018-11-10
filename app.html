@@ -7,7 +7,7 @@
     <script src="app.js"></script>
     <script src="tools.js"></script>
     <script src="right.js"></script>
-    <script src="canvas.js"></script>
+    <script src="src/canvas.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="right.css">
     <script src="sweetalert2.min.js"></script>
@@ -24,13 +24,23 @@
     <div class="his-head">Shapes</div>
 </div>
 <div id="saves" class="saves">
-    <div class="his-head">Saves</div>
+    <div class="his-head" id="__save">Save</div>
 </div>
 <div id="groups" class="groups">
     <div class="his-head">Groups</div>
 </div>
+<div id="styles" class="styles">
+    <div class="his-head">Styles</div>
+</div>
+<div id="settings" class="settings">
+    <div class="his-head">Units</div>
+</div>
 <script>
-    Right.init(document.body);
+    Right.init({
+        styles: document.getElementById("styles"),
+        units: document.getElementById("settings"),
+        shapes: document.getElementById("shapes"),
+    });
     Drawer.init(document.getElementById("draw"),document.getElementById("show"),document.getElementById("tool"),document.getElementById("history"),document.getElementById("saves"),undefined);
 </script>
 </body>
