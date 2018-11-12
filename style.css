@@ -40,6 +40,7 @@ body{
     animation: back 1s ease 1s infinite alternate;
     z-index: 3;
     image-rendering: pixelated;
+    cursor: crosshair;
 }
 #show{
     /*background-color: #efefef;*/
