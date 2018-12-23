@@ -4,7 +4,7 @@
 //     self.element = undefined;
 //     self.menu_elem = undefined;
 //     self.init = (elem) => {
-//         document.oncontextmenu = () => {return false;};
+//         // document.oncontextmenu = () => {return false;};
 //         self.element = elem;
 //         self.menu_elem = document.createElement("div");
 //         self.menu_elem.classList.add("right-menu");
