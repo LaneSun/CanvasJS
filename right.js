@@ -55,7 +55,7 @@ window.Right = {};
 (function (self) {
     self.elem = undefined;
     self.init = (data) => {
-        document.oncontextmenu = () => {return false;};
+        // document.oncontextmenu = () => {return false;};
         self.elem = data;
         // self.bind_all();
     };
